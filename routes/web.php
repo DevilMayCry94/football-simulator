@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/login', 'LoginController@showLoginForm')->name('auth.login');
+Route::post('/login', 'LoginController@login');
+Route::group(['middleware' => 'auth:web'], function() {
+    Route::resource('leagues', 'LeagueController');
+    Route::get('leagues/{league}/next-week', 'LeagueController@nextWeek')->name('leagues.next-week');
+    Route::get('leagues/{league}/play-all', 'LeagueController@playAll')->name('leagues.play-all');
 });
