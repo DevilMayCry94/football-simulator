@@ -9,7 +9,7 @@
                 <div class="col-3">
                     <div class="card" style="width: 18rem;">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $league->name }}</h5>
+                            <h5 class="card-title text-center">{{ $league->name }}</h5>
                             <p class="card-text">{{ $league->description }}</p>
                             <p><i class="fas fa-users"></i>{{ $league->teams->count() }}</p>
                             <a href="{{ route('leagues.show', $league) }}" class="btn btn-primary">Detail</a>

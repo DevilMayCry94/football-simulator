@@ -11,7 +11,7 @@ class League extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'user_id', 'current_week', 'descriptions'];
+    protected $fillable = ['name', 'user_id', 'current_week', 'description'];
 
     public function teams(): HasMany
     {
