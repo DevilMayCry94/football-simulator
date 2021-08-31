@@ -13,6 +13,7 @@
 </div>
 <script src="/js/jquery-3.6.0.min.js"></script>
 <script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/league.js"></script>
 @yield('js')
 </body>
 </html>
