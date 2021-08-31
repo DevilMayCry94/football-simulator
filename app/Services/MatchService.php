@@ -7,7 +7,7 @@ namespace App\Services;
 use App\Models\League;
 use App\Models\Match;
 use App\ValueObject\MatchEntity;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -55,5 +55,18 @@ class MatchService extends CrudBaseService
                 'week' => $weekNumber,
             ]
         )->get();
+    }
+
+    public function getLeftMatchesFromWeek(League $league): Collection
+    {
+        return $this->getQueryBuilder()->where('league_id', $league->id)
+            ->where('week', '>', $league->current_week)->get();
+    }
+
+    public function getCountLeftMatches(League $league): int
+    {
+        return $this->getQueryBuilder()->where('league_id', $league->id)
+            ->when('week', '>', $league->current_week + 1)
+            ->count();
     }
 }

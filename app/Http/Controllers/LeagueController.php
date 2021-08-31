@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LeagueCreateRequest;
 use App\Models\League;
 use App\Services\LeagueService;
-use App\Services\StandingService;
+use App\Services\Prediction;
 use Illuminate\Http\Request;
 use Auth;
 
@@ -39,13 +39,20 @@ class LeagueController extends Controller
         if (!$league = $this->leagueService->create(array_merge($request->validated(), ['user_id' => Auth::user()->id]))) {
             return redirect()->back();
         }
+
         return redirect(route('leagues.show', $league));
     }
 
     public function show(League $league)
     {
+        $numberOfWeek = ($league->teams()->count() - 1) * 2;
+        $predictions = $league->current_week >= ($numberOfWeek- 2) && $league->current_week < $numberOfWeek ?
+            (new Prediction($league))->getPredictions() :
+            [];
+
         return view('pages.leagues.show')
-            ->withLeague($league);
+            ->withLeague($league)
+            ->withPredictions($predictions);
     }
 
     public function edit($id)
@@ -66,12 +73,6 @@ class LeagueController extends Controller
     public function nextWeek(League $league)
     {
         $this->leagueService->nextWeek($league, $league->current_week + 1);
-        return redirect(route('leagues.show', $league));
-    }
-
-    public function playAll(League $league)
-    {
-        $this->leagueService->playAll($league);
         return redirect(route('leagues.show', $league));
     }
 }

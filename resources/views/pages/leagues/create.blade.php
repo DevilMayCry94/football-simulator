@@ -1,7 +1,7 @@
 @extends('layouts.base')
 @section('content')
-    <h3>Create League</h3>
-    <div class="row">
+    <h3 class="text-center">Create League</h3>
+    <div class="">
         @if($errors->any())
             {!! implode('', $errors->all('<div class="text-red">:message</div>')) !!}
         @endif

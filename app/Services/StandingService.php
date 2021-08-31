@@ -7,9 +7,8 @@ namespace App\Services;
 use App\Models\Enums\MatchResultPointsEnum;
 use App\Models\League;
 use App\Models\Standing;
-use App\Models\Team;
 use App\ValueObject\MatchEntity;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class StandingService extends CrudBaseService
 {
@@ -30,7 +29,15 @@ class StandingService extends CrudBaseService
         }
     }
 
-    public function calculateStanding(League $league, \Illuminate\Support\Collection $matchResults, int $weekNumber): void
+    public function getByWeek(League $league, int $weekNumber): Collection
+    {
+        return $this->getQueryBuilder()->where('league_id', $league->id)
+            ->where('week', $weekNumber)
+            ->orderBy('position')
+            ->get();
+    }
+
+    public function calculateStanding(League $league, Collection $matchResults, int $weekNumber): Collection
     {
         $currentStanding = $this->getQueryBuilder()->where([
             'league_id' => $league->id,
@@ -54,12 +61,12 @@ class StandingService extends CrudBaseService
             $this->updateGoalStanding($awayTeamStanding, $matchResult->getAwayScore(), $matchResult->getHomeScore());
         }
 
-        $this->updateStandingPositions($currentStanding);
+        return$this->sortStandingPositions($currentStanding);
     }
 
-    private function updateStandingPositions(Collection $standings): void
+    private function sortStandingPositions(Collection $standings): Collection
     {
-        $standings = $standings->sort(function ($standing1, $standing2) {
+        return $standings->sort(function ($standing1, $standing2) {
             if ($standing1->points == $standing2->points) {
                 if ($standing1->goal_difference == $standing2->goal_difference) {
                     if ($standing1->goal_for == $standing2->goal_for) {
@@ -75,22 +82,29 @@ class StandingService extends CrudBaseService
 
             return $standing1->points > $standing2->points ? -1 : 1;
         });
+    }
 
+    public function updateStandingPosition(Collection $standings): void
+    {
         $position = 1;
         foreach ($standings as $standing) {
-            $this->create([
-                'position' => $position++,
-                'week' => $standing->week,
-                'league_id' => $standing->league_id,
-                'team_id' => $standing->team_id,
-                'goal_for' => $standing->goal_for,
-                'goal_against' => $standing->goal_against,
-                'goal_difference' => $standing->goal_difference,
-                'win' => $standing->win,
-                'lost' => $standing->lost,
-                'draw' => $standing->draw,
-                'points' => $standing->points,
-            ]);
+            $this->updateOrCreate(
+                [
+                    'week' => $standing->week,
+                    'league_id' => $standing->league_id,
+                    'team_id' => $standing->team_id,
+                ],
+                [
+                    'position' => $position++,
+                    'goal_for' => $standing->goal_for,
+                    'goal_against' => $standing->goal_against,
+                    'goal_difference' => $standing->goal_difference,
+                    'win' => $standing->win,
+                    'lost' => $standing->lost,
+                    'draw' => $standing->draw,
+                    'points' => $standing->points,
+                ]
+            );
         }
     }
 

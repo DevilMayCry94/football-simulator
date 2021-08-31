@@ -21,4 +21,9 @@ class Match extends Model
     {
         return $this->belongsTo(Team::class, 'away_team_id', 'id');
     }
+
+    public function league(): BelongsTo
+    {
+        return $this->belongsTo(League::class);
+    }
 }

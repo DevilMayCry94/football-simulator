@@ -9,8 +9,8 @@ use App\Events\LeagueCreatedEvent;
 use App\Models\League;
 use App\ValueObject\MatchEntity;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -90,7 +90,8 @@ class LeagueService extends CrudBaseService
                 );
             }
 
-            $this->standingService->calculateStanding($league, $results, $weekNumber);
+            $standings = $this->standingService->calculateStanding($league, $results, $weekNumber);
+            $this->standingService->updateStandingPosition($standings);
             $this->update($league->id, ['current_week' => $weekNumber]);
             DB::commit();
         } catch (\Exception $exception) {

@@ -8,7 +8,7 @@
 @auth
     @include('components.navigations')
 @endauth
-<div class="page px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+<div class="container px-3 py-3 pt-md-5 pb-md-4 mx-auto">
     @yield('content')
 </div>
 <script src="/js/jquery-3.6.0.min.js"></script>

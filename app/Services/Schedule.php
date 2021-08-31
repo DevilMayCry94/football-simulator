@@ -6,7 +6,7 @@ namespace App\Services;
 
 use App\Models\Team;
 use App\ValueObject\MatchEntity;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class Schedule
 {

@@ -17,6 +17,7 @@ class CreateLeaguesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('name');
+            $table->string('description');
             $table->integer('current_week')->default(0);
             $table->timestamps();
 

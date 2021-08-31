@@ -36,4 +36,9 @@ abstract class CrudBaseService
     {
         return $this->getModel()::query();
     }
+
+    public function updateOrCreate(array $where, array $data): Model
+    {
+        return $this->getModel()::updateOrCreate($where, $data);
+    }
 }
